@@ -89,3 +89,26 @@ would have useful names.
  )
 ```
 This produces a dataframe with **`r nrow(accel_df)`** observations and **`r ncol(accel_df)`** variables. The variables are **`r colnames(accel_df)`**.
+
+To better use the activity data, we can aggregate across minutes to create a total activity variable for each day. Then I plot these activity per day to see if there is an activity trend.
+```{r aggregate and plot}
+
+accel_df %>% group_by(week, day_id, day) %>% 
+  summarize(total_activity = sum(activity))
+
+accel_df %>% group_by(week, day_id, day) %>% 
+  summarize(total_activity = sum(activity)) %>% 
+  ggplot(aes(x=day, y = total_activity, fill = week)) +
+  geom_col(position = 'dodge2') +
+  labs(
+     title = "Trends of a total activity for each day",
+      x = "Day",
+      y = "Activity") 
+
+accel_df %>% group_by(week, day_id, day) %>% 
+  summarize(total_activity = sum(activity)) %>% 
+  ggplot(aes(x=day_id, y = total_activity, color = day))+
+  geom_point()+geom_line()
+```
+
+From the column chart and the line chart above, there is no apparent within-week and between-week trend. However, there are some outliers that the last two Saturdays' activities are obviously lower than any other days, which is 1440. Both the within-week and the between-week activity vary a lot.
