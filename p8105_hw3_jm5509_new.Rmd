@@ -46,10 +46,7 @@ instacart %>% group_by(aisle) %>%
       y = "Number of items ordered") +
   theme(legend.position = "none")
 ```
-
-
 Make a table showing the three most popular items in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”. Include the number of times each item is ordered in your table.
-
 ```{r}
 instacart %>% 
   filter(aisle == c('baking ingredients', 
@@ -59,7 +56,9 @@ instacart %>%
   filter(min_rank(desc(n_product)) <= 3) %>% 
   knitr::kable()
 ```
-Finally is a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week. This table has been formatted in an untidy manner for human readers. Pink Lady Apples are generally purchased slightly earlier in the day than Coffee Ice Cream, with the exception of day 5.
+As is shown above, the top 3 baking ingredients are `light brown sugar`, `organic vanilla extract`, and `pure baking soda`; the top 3 dog food cares are `Organix Chicken & Brown Rice Recipe`, `Organix Grain Free Chicken & Vegetable Dog Food`, and `Original Dry Dog`; the top 3 packaged vegetables fruits are `Organic Baby Spinach`, `Organic Blueberries`, `Organic Raspberries`. Comparing the sales volumes, the `packaged vegetables fruits` category is the most popular one among the three.
+
+Finally, for each day of the week, a table shows the average hour of the day when Pink Lady Apples and Coffee Ice Cream are ordered. For human readers, this table has been structured in an untidy manner. With the exception of day 5, Pink Lady Apples are normally purchased significantly earlier in the day than Coffee Ice Cream.
 ```{r}
 instacart %>% 
   filter(product_name == c('Pink Lady Apples','Coffee Ice Cream')) %>% 
