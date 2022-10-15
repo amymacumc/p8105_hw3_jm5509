@@ -73,3 +73,19 @@ instacart %>%
   pivot_wider(names_from = order_dow, values_from = mean_order_hour) %>% 
   knitr::kable()
 ```
+## Problem 2
+This question is about dealing with the accelerometers data. I would read the data first, 
+and tidying it by adding one  a weekday vs weekend variable, and changing the variables of activity every minute into observations by *pivot_longer()* function. In this case this dataframe
+would have useful names.
+```{r accel_df}
+(accel_df <- read_csv('accel_data.csv') %>% 
+  janitor::clean_names() %>% 
+  rename_with(~str_replace(., regex('^activity_'),'')) %>% 
+  mutate(weekday_vs_weekend =
+           ifelse(day %in% c('Monday', 'Tuesday', 'Wednesday',
+                             'Thursday', 'Friday'), 'weekday', 'weekend')) %>% 
+  pivot_longer('1':'1440', names_to = 'minute', values_to = 'activity') %>% 
+  mutate(minute = as.integer(minute)) 
+ )
+```
+This produces a dataframe with **`r nrow(accel_df)`** observations and **`r ncol(accel_df)`** variables. The variables are **`r colnames(accel_df)`**.
