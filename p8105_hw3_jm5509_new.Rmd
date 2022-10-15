@@ -128,3 +128,16 @@ accel_df %>%
 ```
 
 From this panel, we can see that the activity tend do be higher in Fridays and Mondays, and lower on Wednesdays and Tuesdays. During the one-day period, the activity tend to be higher after 7:00 am.(Suppose that it's because the subject is at sleep.) The activity peak is at around 11:00 and 20:00.
+
+## Problem 3
+The following code was used to acquire the five core variables for all New York state weather stations from January 1, 1981 through December 31, 2010. I would first read the data and then do some data cleaning: I create separate variables for year, month, and day and ensure observations for temperature, precipitation, and snowfall are given in reasonable units.
+```{r}
+data('ny_noaa')
+(ny_noaa <- ny_noaa %>% 
+  separate(date, into = c('year', 'month', 'day'), sep='-') %>% 
+  mutate(prcp = prcp/10, tmax = as.numeric(tmax)/ 10, 
+         tmin = as.numeric(tmin)/10))
+```
+The original dataframe has **`r ny_noaa %>% nrow()` observations** and **`r ny_noaa  %>% ncol()` variables**. The key variables include date(date of observation), prcp(Precipitation (tenths of mm)), snow(snowfall(mm)), tmax(Maximum temperature (tenths of degrees C)), tmin(Minimum temperature (tenths of degrees C)).
+However, it contains many missing values. There is `r sum(is.na(ny_noaa$prcp))` missing precipitations, `r sum(is.na(ny_noaa$snow))` missing snowfall, `r sum(is.na(ny_noaa$snwd))` missing snow depth, `r sum(is.na(ny_noaa$tmax))` missing maximum temperature, `r sum(is.na(ny_noaa$tmin))` minimum temperature. After dropping all the missing values, the dataset contains `r ny_noaa %>% na.omit(prcp:tmin)  %>% nrow()` observations.
+
