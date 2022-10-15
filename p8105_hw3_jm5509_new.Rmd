@@ -1,0 +1,76 @@
+---
+title: "p8105_hw3_jm5509"
+author: "Echo"
+date: "2022-10-15"
+output: github_document
+---
+
+```{r setup, include=FALSE, message=FALSE, warning=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(tidyverse)
+library(p8105.datasets)
+library(patchwork)
+library(lubridate)
+
+theme_set(theme_minimal() + theme(legend.position = "bottom"))
+
+options(
+  ggplot2.continuous.colour = "viridis",
+  ggplot2.continuous.fill = "viridis"
+)
+```
+
+## Problem 1
+This problem uses the Instacart data.The goal is to do some exploration of this dataset.
+How many aisles are there, and which aisles are the most items ordered from?
+```{r}
+data("instacart")
+(instacart %>% group_by(aisle) %>% count() %>% nrow())
+```
+
+```{r}
+(instacart %>% group_by(aisle_id) %>% count() %>% nrow())
+```
+Make a plot that shows the number of items ordered in each aisle, limiting this to aisles with more than 10000 items ordered. Arrange aisles sensibly, and organize your plot so others can read it.
+```{r}
+instacart %>% group_by(aisle) %>% 
+  summarize(n_ordered = n()) %>% 
+  filter(n_ordered > 10000) %>% 
+  arrange(desc(n_ordered)) %>% 
+  mutate(aisle = fct_reorder(aisle, n_ordered)) %>% 
+  ggplot(aes(y=aisle, x= n_ordered, fill=aisle))+
+  geom_col()+
+  labs(
+     title = "Number of items ordered in every aisle",
+      x = "Aisle",
+      y = "Number of items ordered") +
+  theme(legend.position = "none")
+```
+
+
+Make a table showing the three most popular items in each of the aisles “baking ingredients”, “dog food care”, and “packaged vegetables fruits”. Include the number of times each item is ordered in your table.
+
+```{r}
+instacart %>% 
+  filter(aisle == c('baking ingredients', 
+                    'dog food care', 'packaged vegetables fruits')) %>%
+  group_by(aisle, product_name) %>% 
+  summarize(n_product = n()) %>% 
+  filter(min_rank(desc(n_product)) <= 3) %>% 
+  knitr::kable()
+```
+Finally is a table showing the mean hour of the day at which Pink Lady Apples and Coffee Ice Cream are ordered on each day of the week. This table has been formatted in an untidy manner for human readers. Pink Lady Apples are generally purchased slightly earlier in the day than Coffee Ice Cream, with the exception of day 5.
+```{r}
+instacart %>% 
+  filter(product_name == c('Pink Lady Apples','Coffee Ice Cream')) %>% 
+  group_by(product_name, order_dow) %>% 
+  summarize(
+    mean_order_hour = mean(order_hour_of_day)
+  ) %>% 
+  mutate(order_dow = recode(order_dow, `0` = 'Sunday', `1` =' Monday',
+                            `2` = 'Tuesday', `3` = 'Wednesday',
+                            `4` = 'Thursday', `5` = 'Friday',
+                            `6` = 'Saturday')) %>% 
+  pivot_wider(names_from = order_dow, values_from = mean_order_hour) %>% 
+  knitr::kable()
+```
